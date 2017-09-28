@@ -9,7 +9,7 @@ canvas.height = innerHeight;
 // Variables
 const mouse = {
 	x: innerWidth / 2,
-	y: innerHeight / 2 
+	y: innerHeight / 2
 };
 
 const colors = [
@@ -27,7 +27,7 @@ addEventListener('mousemove', event => {
 });
 
 addEventListener('resize', () => {
-	canvas.width = innerWidth;	
+	canvas.width = innerWidth;
 	canvas.height = innerHeight;
 
 	init();
@@ -45,19 +45,28 @@ function randomColor(colors) {
 
 
 // Objects
-function Object(x, y, radius, color) {
+function Particle(x, y, radius, color) {
 	this.x = x;
 	this.y = y;
 	this.radius = radius;
 	this.color = color;
+	this.radians = Math.random() * Math.PI * 2;
+	this.velocity = 0.05;
+	this.distanceFromCenter = {x: randomIntFromRange(50 ,120),
+	y: randomIntFromRange(50 ,120)}
 
 	this.update = () => {
+//move points over time
+		this.radians += this.velocity;
+		//circular Motion
+		this.x = x + Math.cos(this.radians) * this.distanceFromCenter.x;
+		this.y = y + Math.sin(this.radians) * this.distanceFromCenter.y;
 		this.draw();
 	};
 
 	this.draw = () => {
 		c.beginPath();
-		c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);	
+		c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
 		c.fillStyle = this.color;
 		c.fill();
 		c.closePath();
@@ -66,13 +75,15 @@ function Object(x, y, radius, color) {
 
 
 // Implementation
-let objects;
+let particles;
 function init() {
-	objects = []
+	particles = []
 
-	for (let i = 0; i < 400; i++) {
-		// objects.push();
+	for (let i = 0; i < 50; i++) {
+		particles.push(new Particle(canvas.width/ 2,
+			canvas.height / 2, 5, 'blue'));
 	}
+	console.log(particles);
 }
 
 // Animation Loop
@@ -80,10 +91,10 @@ function animate() {
 	requestAnimationFrame(animate);
 	c.clearRect(0, 0, canvas.width, canvas.height);
 
-	c.fillText('HTML CANVAS BOILERPLATE', mouse.x, mouse.y);
-	// objects.forEach(object => {
-	// 	object.update();
-	// });
+
+	particles.forEach(particle => {
+		particle.update();
+	});
 }
 
 init();
